@@ -17,8 +17,8 @@ fi
 openstack image list
 echo "Please provide image name:"
 read imgname
-#echo" Downloading image $imgname"
-echo "openstack image save $imgname > $imgname.raw"
+MIN_DISK=`openstack image show $imgname|grep min_disk|cut -d '|' -f 3|sed 's/^[ \t]*//;s/[ \t]*$//'`
+echo" Downloading image $imgname"
 openstack image save $imgname > $imgname.raw
 echo "Converting image to $imgname.qcow2"
 qemu-img convert -f raw -O qcow2 $imgname.raw $imgname.qcow2
@@ -41,6 +41,6 @@ if ! openstack token issue; then
     exit 1
 fi
 echo "Uploading $imgname.qcow2 to destination platform"
-openstack image create --disk-format qcow2 --container-format bare --private --min-disk 40 $imgname < $imgname.qcow2
+openstack image create --disk-format qcow2 --container-format bare --private --min-disk $MIN_DISK $imgname < $imgname.qcow2
 echo "Cleaning up temp qcow2 image"
 rm $imgname.qcow2
