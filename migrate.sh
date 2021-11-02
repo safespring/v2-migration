@@ -15,7 +15,7 @@ if ! openstack token issue; then
 fi
 
 openstack image list
-echo "Plz provide image name:"
+echo "Please provide image name:"
 read imgname
 #echo" Downloading image $imgname"
 echo "openstack image save $imgname > $imgname.raw"
@@ -40,6 +40,7 @@ if ! openstack token issue; then
     echo "No contact with destination platform"
     exit 1
 fi
+echo "Uploading $imgname.qcow2 to destination platform"
 openstack image create --disk-format qcow2 --container-format bare --private --min-disk 40 $imgname < $imgname.qcow2
 echo "Cleaning up temp qcow2 image"
 rm $imgname.qcow2
